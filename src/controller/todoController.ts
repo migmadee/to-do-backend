@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import Todo from '../models/todoModel'
+import { todo } from 'node:test'
 
 // Create a new Todo
 export const createTodo = async (req: Request, res: Response): Promise<void> => {
@@ -7,25 +8,25 @@ export const createTodo = async (req: Request, res: Response): Promise<void> => 
     const { text } = req.body
 
     if (!text || typeof text !== 'string') {
-      res.status(400).json({ message: 'Text is required and must be a string.' })
+      res.status(400).json({ message: 'Text is required and must be a string.'})
       return
     }
 
     const newTodo = new Todo({ text })
     const savedTodo = await newTodo.save()
-    res.status(201).json(savedTodo)
+    res.status(201).json({message: 'Created todo successfully', data:savedTodo})
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: (error as Error).message })
   }
 }
 
-// Get all Todos
+// Get all Todo
 export const getTodos = async (_req: Request, res: Response): Promise<void> => {
   try {
     const todos = await Todo.find().sort({ createdAt: -1 })
-    res.status(200).json(todos)
+    res.status(200).json({data:todos})
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: (error as Error).message })
+    res.status(500).json({ message: 'Server error',  error: (error as Error).message })
   }
 }
 
@@ -34,10 +35,10 @@ export const getTodoById = async (req: Request, res: Response): Promise<void> =>
   try {
     const todo = await Todo.findById(req.params.id)
     if (!todo) {
-      res.status(404).json({ message: 'Todo not found' })
+      res.status(404).json({ message: 'Todo not found'})
       return
     }
-    res.status(200).json(todo)
+    res.status(200).json({message: 'Todo found ',data:todo})
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: (error as Error).message })
   }
@@ -54,11 +55,11 @@ export const updateTodo = async (req: Request, res: Response): Promise<void> => 
     )
 
     if (!updatedTodo) {
-      res.status(404).json({ message: 'Todo not found' })
+      res.status(404).json({ message: 'Todo not found'})
       return
     }
 
-    res.status(200).json(updatedTodo)
+    res.status(200).json({message: 'Todo updated successfully', data: updatedTodo})
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: (error as Error).message })
   }
